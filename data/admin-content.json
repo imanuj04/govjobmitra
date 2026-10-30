@@ -1,0 +1,32 @@
+{
+  "drafts": [
+    {
+      "id": "50f9210e-f23f-49e1-87bf-0ff6c327e1d7",
+      "type": "Government Vacancy",
+      "title": "ssc",
+      "slug": "ssc-gov-in",
+      "department": "ssc",
+      "lastDate": "2027-10-04",
+      "notificationUrl": "https://ssc.gov.in/",
+      "applyUrl": "https://ssc.gov.in/",
+      "excerpt": "test",
+      "body": "test",
+      "imageUrl": "https://ssc.gov.in/",
+      "tags": [
+        "ssc"
+      ],
+      "seo": "check",
+      "updatedAt": "2026-10-30T20:47:13.150Z"
+    }
+  ],
+  "published": [],
+  "scheduled": [],
+  "pending": [],
+  "activity": [
+    {
+      "action": "saveDraft",
+      "detail": "Draft saved to GitHub",
+      "at": "2026-10-30T20:47:13.150Z"
+    }
+  ]
+}
