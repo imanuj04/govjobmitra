@@ -13,7 +13,7 @@
 .news-feed-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;align-items:stretch}
 .news-feed-card{border:1px solid var(--line);border-radius:15px;padding:21px;background:#fff;display:flex;flex-direction:column;height:300px;min-width:0;overflow:hidden;box-shadow:0 5px 18px #183b6408;transition:transform .18s,box-shadow .18s}.news-feed-card:hover{transform:translateY(-3px);box-shadow:0 10px 26px #183b6414}
 .news-feed-card h2{font-size:16px;line-height:1.5;color:var(--navy);margin:14px 0 10px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;min-height:72px}
-.news-feed-card p{font-size:12px;line-height:1.7;color:var(--muted);margin:0 0 16px;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.news-feed-card h2 a{color:inherit;text-decoration:none}.news-feed-card h2 a:hover{color:var(--blue);text-decoration:underline}.news-feed-card p{font-size:12px;line-height:1.7;color:var(--muted);margin:0 0 16px;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
 .news-feed-meta{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:10px;color:#718096}
 .news-feed-label{background:#eaf2fc;color:var(--blue);padding:5px 9px;border-radius:20px;font-weight:800}
 .news-feed-read{margin-top:auto;border-top:1px solid #edf1f6;padding-top:13px;display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--muted)}
@@ -53,7 +53,7 @@ function render(){
   const tag=document.createElement('span');tag.className='news-feed-label';tag.textContent=categoryNames[x.category]||'News & GK';
   const date=document.createElement('span');date.textContent=x.publishedAt&&!Number.isNaN(Date.parse(x.publishedAt))?new Date(x.publishedAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'Latest';
   meta.append(tag,date);
-  const h=document.createElement('h2');h.textContent=x.title;
+  const h=document.createElement('h2');const titleLink=document.createElement('a');titleLink.href=x.link;titleLink.target='_blank';titleLink.rel='noopener noreferrer';titleLink.textContent=x.title;titleLink.title='पूरा लेख पढ़ें';h.append(titleLink);
   const p=document.createElement('p');p.textContent=x.description||'Read this latest update on GovJobMitra.';
   const foot=document.createElement('div');foot.className='news-feed-read';
   const language=document.createElement('span');language.textContent='हिंदी';
