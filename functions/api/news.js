@@ -17,13 +17,48 @@ async function readFeed(url,category,categoryLabel){
  }).filter(item=>item.title&&/^https?:\/\//i.test(item.link));
 }
 async function safeFeed(url,category,label){try{return await readFeed(url,category,label);}catch{return[];}}
+function googleFeed(query,lang,category,label){
+ const q=encodeURIComponent(query);
+ const hl=lang==="hi"?"hi":"en-IN",ceid=lang==="hi"?"IN:hi":"IN:en";
+ return safeFeed("https://news.google.com/rss/search?q="+q+"&hl="+hl+"&gl=IN&ceid="+ceid,category,label);
+}
 async function collectHindi(){
- const feeds=[safeFeed("https://feeds.bbci.co.uk/hindi/rss.xml","world","भारत और दुनिया"),safeFeed("https://www.aajtak.in/rssfeeds/?id=home","government","ताज़ा खबरें"),safeFeed("https://news.google.com/rss?hl=hi&gl=IN&ceid=IN:hi","government","सरकारी और देश की खबरें"),safeFeed("https://pib.gov.in/RssMain.aspx?ModId=6&Lang=1&Regid=3","government","सरकारी सूचना")];
- return merge(await Promise.all(feeds),30);
+ const feeds=[
+  googleFeed("भारत राजनीति OR संसद OR सरकार OR चुनाव","hi","politics","राजनीति"),
+  googleFeed("भारत खेल OR क्रिकेट OR हॉकी OR बैडमिंटन OR टेनिस","hi","sports","खेल"),
+  googleFeed("विश्व समाचार OR अंतरराष्ट्रीय","hi","world","दुनिया"),
+  googleFeed("भारत मौसम OR मौसम विभाग OR IMD बारिश OR मानसून","hi","weather","मौसम"),
+  googleFeed("भारत सामान्य ज्ञान OR करेंट अफेयर्स OR विज्ञान OR अंतरिक्ष OR पुरस्कार OR नियुक्ति","hi","gk","GK और करेंट अफेयर्स"),
+  safeFeed("https://www.bhaskar.com/rss-v1--category-1061.xml","gk","GK और करेंट अफेयर्स")
+ ];
+ return filterAndMerge(await Promise.all(feeds),35);
 }
 async function collectEnglish(){
- const feeds=[safeFeed("https://feeds.bbci.co.uk/news/india/rss.xml","government","India"),safeFeed("https://feeds.bbci.co.uk/news/world/rss.xml","world","World"),safeFeed("https://news.google.com/rss?hl=en-IN&gl=IN&ceid=IN:en","government","Latest India News"),safeFeed("https://pib.gov.in/RssMain.aspx?ModId=6&Lang=2&Regid=3","government","Government Updates")];
- return merge(await Promise.all(feeds),30);
+ const feeds=[
+  safeFeed("https://indianexpress.com/section/politics/feed/","politics","Politics"),
+  safeFeed("https://news.abplive.com/news/india/feed","politics","India & Politics"),
+  safeFeed("https://indianexpress.com/section/sports/feed/","sports","Sports"),
+  safeFeed("https://news.abplive.com/sports/feed","sports","Sports"),
+  safeFeed("https://indianexpress.com/section/world/feed/","world","World"),
+  safeFeed("https://news.abplive.com/news/world/feed","world","World"),
+  safeFeed("https://indianexpress.com/section/weather/feed/","weather","Weather"),
+  googleFeed("India weather IMD forecast monsoon heatwave","en","weather","Weather"),
+  safeFeed("https://indianexpress.com/section/upsc-current-affairs/feed/","gk","GK & Current Affairs"),
+  googleFeed("India general knowledge current affairs science space awards appointments","en","gk","GK & Current Affairs")
+ ];
+ return filterAndMerge(await Promise.all(feeds),35);
+}
+const unwanted=/\\b(murder|rape|robbery|theft|kidnap|crime|criminal|accident|shootout|stabbing|suicide|dead body|dacoity|loot|assault)\\b|हत्या|बलात्कार|लूट|डकैती|चोरी|अपहरण|दुष्कर्म|हादसा|एक्सीडेंट|शव|आत्महत्या|मारपीट/i;
+function filterAndMerge(groups,limit){
+ const seen=new Set(),result=[];
+ for(const items of groups)for(const item of items){
+  const text=item.title+" "+item.description;
+  if(unwanted.test(text))continue;
+  const key=item.title.toLocaleLowerCase();
+  if(!seen.has(key)){seen.add(key);result.push(item);}
+  if(result.length>=limit)return result;
+ }
+ return result;
 }
 function merge(groups,limit){const seen=new Set(),result=[];for(const items of groups)for(const item of items){const key=item.title.toLocaleLowerCase();if(!seen.has(key)){seen.add(key);result.push(item);}if(result.length>=limit)return result;}return result;}
 export async function onRequestGet(){
