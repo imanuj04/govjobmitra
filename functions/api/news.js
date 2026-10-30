@@ -36,7 +36,8 @@ async function collectHindi(){
   googleFeed("आज के करेंट अफेयर्स सामान्य ज्ञान विज्ञान खोज भारत हिंदी","hi","gk","GK और करेंट अफेयर्स"),
   safeFeed("https://www.bhaskar.com/rss-v1--category-1061.xml","gk","GK और करेंट अफेयर्स")
  ];
- const groups=await Promise.all(feeds);\n return filterAndMerge(groups.map(items=>items.filter(item=>/[\\u0900-\\u097F]/.test(item.title))),50);
+ const groups=await Promise.all(feeds);
+ return filterAndMerge(groups.map(items=>items.filter(item=>/[\\u0900-\\u097F]/.test(item.title))),50);
 }
 async function collectEnglish(){
  const feeds=[
