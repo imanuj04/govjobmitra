@@ -14,9 +14,7 @@ if(year)year.textContent=new Date().getFullYear();
   function makeHeadline(item){
     const link=document.createElement('a');
     link.className='ticker-item';
-    link.href=item.link;
-    link.target='_blank';
-    link.rel='noopener noreferrer';
+    link.href='news.html?title='+encodeURIComponent(item.title)+'&url='+encodeURIComponent(item.link)+'&source='+encodeURIComponent(item.source||'')+'&category='+encodeURIComponent(item.categoryLabel||item.category||'News');
     link.title=(item.source?item.source+' — ':'')+item.title;
     const source=document.createElement('span');
     source.className='ticker-source';
@@ -52,7 +50,7 @@ if(year)year.textContent=new Date().getFullYear();
       const data=await response.json();
       render(hindiTrack,data.hindi,'अभी हिंदी सुर्खियाँ उपलब्ध नहीं हैं।');
       render(englishTrack,data.english,'No English headlines available right now.');
-      if(status)status.textContent='Latest headlines · Updated '+new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})+' · Select a headline to open the publisher report';
+      if(status)status.textContent='Latest headlines · Updated '+new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})+' · Select a headline to read it on GovJobMitra';
     }catch(error){
       render(hindiTrack,[],'समाचार अभी लोड नहीं हो पाए। कृपया थोड़ी देर बाद देखें।');
       render(englishTrack,[],'Headlines are temporarily unavailable. Please try again later.');
