@@ -10,6 +10,46 @@
 @media(max-width:1050px){.sidebar{width:218px}.main{margin-left:218px}.stats{grid-template-columns:repeat(2,1fr)}.content{padding:25px 22px}.topbar{padding:0 22px}}
 @media(max-width:720px){.sidebar{width: min(285px,84vw);transform:translateX(-100%);transition:transform .2s}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.topbar{height:62px;padding:0 15px}.mobile-menu{display:block;border:0;background:white;font-size:20px;margin-right:10px}.crumb{display:flex;align-items:center}.content{padding:22px 15px 35px}.heading h1{font-size:23px}.date-chip{display:none}.welcome{padding:18px}.welcome-mark{display:none}.stats{gap:9px}.stat{padding:13px;min-height:98px}.stat strong{font-size:22px}.columns{grid-template-columns:1fr}.site-link{display:none}.top-actions{gap:8px}}
 @media(max-width:380px){.stats{grid-template-columns:1fr 1fr}.stat-top{font-size:10px}}
+
+/* Visual polish: softer depth, smoother motion, clearer focus and responsive interactions */
+:root{--bg:#f3f6fc;--line:#e7edf6;--blue:#416fe0}
+html{scroll-behavior:smooth}
+body{background:radial-gradient(ellipse at 85% 0%,#eaf0ff 0,transparent 34%),var(--bg)}
+.sidebar{background:linear-gradient(165deg,#111f3b 0%,#152947 58%,#101b33 100%);box-shadow:8px 0 32px #10234412}
+.logo{background:linear-gradient(145deg,#86a8ff,#3564d7);box-shadow:0 8px 22px #4775df55;transition:transform .25s ease,box-shadow .25s ease}
+.brand:hover .logo{transform:rotate(-7deg) scale(1.06);box-shadow:0 10px 26px #4775df77}
+.nav button{position:relative;overflow:hidden;transition:background .22s ease,color .22s ease,transform .22s ease}
+.nav button:hover{transform:translateX(3px)}
+.nav button.active{background:linear-gradient(100deg,#35558b,#263e67);box-shadow:inset 3px 0 #91b0ff,0 5px 16px #08172d30}
+.topbar{background:#ffffffed;backdrop-filter:blur(14px);box-shadow:0 3px 18px #1b315708}
+.avatar{box-shadow:inset 0 0 0 1px #dce6ff;transition:transform .2s ease}
+.avatar:hover{transform:scale(1.07)}
+.content{animation:contentIn .42s cubic-bezier(.2,.7,.2,1) both}
+@keyframes contentIn{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+.heading h1{letter-spacing:-1px}
+.welcome{position:relative;overflow:hidden;background:linear-gradient(112deg,#172b4d 0%,#294d83 58%,#4169a8 100%);box-shadow:0 14px 32px #1d3b6926}
+.welcome:after{content:"";position:absolute;width:250px;height:250px;border:1px solid #ffffff20;border-radius:50%;right:7%;top:-155px;box-shadow:0 0 0 28px #ffffff08,0 0 0 58px #ffffff05;pointer-events:none}
+.welcome-mark{position:relative;z-index:1;text-shadow:0 5px 20px #ffffff55;animation:softFloat 4s ease-in-out infinite}
+@keyframes softFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.stat,.panel{border-color:#e6ecf5;box-shadow:0 5px 18px #243b6308;transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}
+.stat:hover,.panel:hover{transform:translateY(-2px);box-shadow:0 12px 28px #243b6310;border-color:#d8e2f1}
+.stat-icon,.quick .qicon{transition:transform .22s ease,background .22s ease}
+.stat:hover .stat-icon,.quick button:hover .qicon{transform:scale(1.08);background:#e5edff}
+.quick button{transition:transform .2s ease,border-color .2s ease,background .2s ease,box-shadow .2s ease}
+.quick button:hover{transform:translateY(-2px);box-shadow:0 7px 18px #2b4a7a0d}
+.empty{background:linear-gradient(180deg,#fbfcff,#fff)}
+.search,.filter,.editor-input{transition:border-color .18s ease,box-shadow .18s ease,background .18s ease}
+.search:focus,.filter:focus,.editor-input:focus{border-color:#8ba9f1;box-shadow:0 0 0 3px #4778e51a;background:#fff;outline:none}
+button:focus-visible,a:focus-visible{outline:3px solid #8eafff;outline-offset:3px}
+.editor-toolbar button{transition:background .18s ease,border-color .18s ease,transform .18s ease}
+.editor-toolbar button:hover{background:#edf3ff;border-color:#cbd9fa;transform:translateY(-1px)}
+.status-pill{box-shadow:inset 0 0 0 1px #d5f0e2}
+.view.active{animation:viewIn .28s ease both}
+@keyframes viewIn{from{opacity:.5;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+::selection{background:#dbe7ff;color:#1c376a}
+@media(max-width:720px){.sidebar{box-shadow:18px 0 40px #0a173b45}.sidebar.open{transform:translateX(0)}.welcome:after{right:-90px}.stat:hover,.panel:hover{transform:none}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
 </style>
 </head>
 <body>
