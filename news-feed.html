@@ -10,10 +10,10 @@
 .news-categories{display:flex;gap:9px;flex-wrap:wrap;margin:22px 0 26px}
 .news-categories button{border:1px solid var(--line);background:#fff;border-radius:30px;padding:9px 15px;font-size:12px;color:#526176;cursor:pointer}
 .news-categories button.active,.news-categories button:hover{background:#eaf2fc;border-color:#c5d9f1;color:var(--blue)}
-.news-feed-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
-.news-feed-card{border:1px solid var(--line);border-radius:15px;padding:20px;background:#fff;display:flex;flex-direction:column;min-height:245px;box-shadow:0 5px 18px #183b6408}
-.news-feed-card h2{font-size:16px;line-height:1.55;color:var(--navy);margin:13px 0 9px}
-.news-feed-card p{font-size:12px;line-height:1.7;color:var(--muted);margin:0 0 16px}
+.news-feed-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;align-items:stretch}
+.news-feed-card{border:1px solid var(--line);border-radius:15px;padding:21px;background:#fff;display:flex;flex-direction:column;height:300px;min-width:0;overflow:hidden;box-shadow:0 5px 18px #183b6408;transition:transform .18s,box-shadow .18s}.news-feed-card:hover{transform:translateY(-3px);box-shadow:0 10px 26px #183b6414}
+.news-feed-card h2{font-size:16px;line-height:1.5;color:var(--navy);margin:14px 0 10px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;min-height:72px}
+.news-feed-card p{font-size:12px;line-height:1.7;color:var(--muted);margin:0 0 16px;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
 .news-feed-meta{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:10px;color:#718096}
 .news-feed-label{background:#eaf2fc;color:var(--blue);padding:5px 9px;border-radius:20px;font-weight:800}
 .news-feed-read{margin-top:auto;border-top:1px solid #edf1f6;padding-top:13px;display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--muted)}
@@ -23,8 +23,8 @@
 .news-pagination button:disabled{opacity:.4;cursor:not-allowed}
 .news-page-number{font-size:12px;color:var(--muted)}
 .news-feed-empty{grid-column:1/-1}
-@media(max-width:850px){.news-feed-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:560px){.news-feed-wrap{padding:0 16px}.news-feed-grid{grid-template-columns:1fr}.news-feed-head{display:block}.news-feed-head p{margin-top:8px}}
+@media(max-width:850px){.news-feed-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.news-feed-card{height:290px}}
+@media(max-width:560px){.news-feed-wrap{padding:0 16px}.news-feed-grid{grid-template-columns:1fr}.news-feed-card{height:auto;min-height:245px}.news-feed-head{display:block}.news-feed-head p{margin-top:8px}}
 </style></head>
 <body><div class="topline">ताज़ा खबरें · Latest updates</div>
 <header class="site-header"><a class="brand" href="./"><span class="brand-mark">G</span><span>GovJob<span class="brand-accent">Mitra</span><small>Your guide to government opportunities</small></span></a><a class="back-home" href="./">← Home</a></header>
@@ -38,7 +38,7 @@
 </main><footer><div class="copyright">© <span id="year"></span> GovJobMitra. All rights reserved.</div></footer>
 <script>
 const grid=document.getElementById('newsGrid'),statusEl=document.getElementById('feedStatus'),categoryBar=document.getElementById('newsCategories'),prev=document.getElementById('prevPage'),next=document.getElementById('nextPage'),pageLabel=document.getElementById('pageNumber');
-let all=[],category='all',page=1;const PAGE_SIZE=3;
+let all=[],category='all',page=1;const PAGE_SIZE=9;
 const categoryNames={gk:'GK & Current Affairs',sports:'Sports',politics:'Politics',world:'World',weather:'Weather'};
 function safe(v){return String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function articleUrl(x){const lang=x.lang||'en';return 'news.html?title='+encodeURIComponent(x.title||'')+'&url='+encodeURIComponent(x.link||'')+'&category='+encodeURIComponent(categoryNames[x.category]||x.categoryLabel||'News')+'&description='+encodeURIComponent(x.description||'')+'&content='+encodeURIComponent(x.fullContent||'')+'&date='+encodeURIComponent(x.publishedAt||'')+'&image='+encodeURIComponent(x.image||'')+'&lang='+lang;}
