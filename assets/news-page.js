@@ -19,7 +19,7 @@ function renderFeedHtml(html){
 }
 if(fullContent&&plain(fullContent).length>plain(excerpt).length+80){renderFeedHtml(fullContent);}
 else if(excerpt){const p=document.createElement('p');p.textContent=plain(excerpt);body.append(p);}
-else{const p=document.createElement('p');p.textContent=hi?'इस खबर का पूरा लेख RSS feed में उपलब्ध नहीं है।':'The feed does not provide the full article text for this story.';body.append(p);}
+else{const p=document.createElement('p');p.textContent=hi?'इस खबर की विस्तृत जानकारी लोड की जा रही है…':'Loading more details for this update…';body.append(p);}
 if(feedImage)addImage(feedImage);
 if(fullContent&&plain(fullContent).length>plain(excerpt).length+80){const note=document.createElement('p');note.className='news-reading-label';note.textContent=hi?'यह लेख उपलब्ध RSS feed के पूरे टेक्स्ट से दिखाया गया है।':'Full text displayed as supplied in the RSS feed.';body.append(note);}
 async function loadArticle(){
@@ -28,6 +28,14 @@ async function loadArticle(){
   const r=await fetch('/api/article?url='+encodeURIComponent(articleUrl),{cache:'no-store'});if(!r.ok)return;
   const data=await r.json();
   if(data.image&&!body.querySelector('.news-hero-image'))addImage(data.image);
+  const hasStory=!!(fullContent&&plain(fullContent).length>plain(excerpt).length+80)||!!excerpt;
+  if(!hasStory){
+   body.replaceChildren();
+   if(data.description){const p=document.createElement('p');p.textContent=plain(data.description);body.append(p);}
+   if(Array.isArray(data.headings)&&data.headings.length){const h=document.createElement('h2');h.className='news-subhead';h.textContent=hi?'इस खबर के मुख्य बिंदु':'Key points';body.append(h);const ul=document.createElement('ul');data.headings.forEach(value=>{const li=document.createElement('li');li.textContent=value;ul.append(li);});body.append(ul);}
+   if(!body.children.length){const p=document.createElement('p');p.textContent=hi?'इस खबर का विस्तृत विवरण अभी उपलब्ध नहीं है। नीचे दिए गए मूल स्रोत पर पूरी जानकारी देखें।':'A detailed summary is not available yet. Please use the original report for full details.';body.append(p);}
+   const link=document.createElement('a');link.href=articleUrl;link.target='_blank';link.rel='noopener noreferrer';link.className='news-source-link';link.textContent=hi?'मूल रिपोर्ट पढ़ें →':'Read original report →';const wrap=document.createElement('p');wrap.className='news-read-more';wrap.append(link);body.append(wrap);
+  }
  }catch{}
 }
 if(!feedImage)loadArticle();
