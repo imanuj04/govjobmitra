@@ -8,11 +8,12 @@ async function readFeed(url,category,categoryLabel){
  if(!response.ok)throw new Error("Feed HTTP "+response.status);const xml=await response.text();if(!/<(?:rss|feed|rdf:RDF)\b/i.test(xml))throw new Error("Feed response was not RSS");
  return [...xml.matchAll(/<(item|entry)(?:\s[^>]*)?>([\s\S]*?)<\/\1>/gi)].map(match=>{
   const raw=match[2],title=clean(readTag(raw,"title")),linkText=clean(readTag(raw,"link")),linkAttr=(raw.match(/<link\b[^>]*\bhref=["']([^"']+)["']/i)||[])[1]||"";
-  const encoded=readTag(raw,"content:encoded")||readTag(raw,"content"),description=clean(readTag(raw,"description")||readTag(raw,"summary")||encoded);
+  const encoded=readTag(raw,"content:encoded")||readTag(raw,"content"),summary=readTag(raw,"description")||readTag(raw,"summary");
+  const description=clean(summary||encoded),fullContent=encoded&&clean(encoded).length>description.length?encoded:"";
   const date=clean(readTag(raw,"pubDate")||readTag(raw,"published")||readTag(raw,"updated")||readTag(raw,"dc:date"));
   const image=(raw.match(/<(?:media:content|media:thumbnail|enclosure)\b[^>]*(?:url|href)=["']([^"']+)["']/i)||[])[1]||((encoded||"").match(/<img[^>]+src=["']([^"']+)["']/i)||[])[1]||"";
   const author=clean(readTag(raw,"author")||readTag(raw,"dc:creator"));
-  return {title,link:(linkText||linkAttr).trim(),source:clean(readTag(raw,"source")||author),description,content:clean(encoded),publishedAt:date,image,category,categoryLabel};
+  return {title,link:(linkText||linkAttr).trim(),source:clean(readTag(raw,"source")||author),description,fullContent,publishedAt:date,image,category,categoryLabel};
  }).filter(item=>item.title&&/^https?:\/\//i.test(item.link));
 }
 async function safeFeed(url,category,label){try{return await readFeed(url,category,label);}catch{return[];}}
