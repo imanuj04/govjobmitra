@@ -10,12 +10,15 @@
 <div class="notice">Dashboard shell is ready. Vacancy approval and content-management actions are not enabled yet; they require protected APIs and a database connection.</div>
 <p class="session-note">Automatic sign-out after 20 minutes without activity.</p></main>
 <script>
-let lastPing=0,expired=false;
+let lastPing=0,expired=false,idleTimer=null;
+const IDLE_MS=20*60*1000;
+function resetIdleTimer(){clearTimeout(idleTimer);idleTimer=setTimeout(expire,IDLE_MS);}
 async function checkSession(){const r=await fetch("/api/auth/session",{credentials:"same-origin",cache:"no-store"});if(!r.ok)throw Error("session expired");const s=await r.json();if(!s.authenticated)throw Error("session expired");document.getElementById("welcome").textContent="Signed in as "+s.email;}
 function expire(){if(expired)return;expired=true;location.replace("/admin/login/?reason=idle");}
 async function activityPing(){if(expired)return;const now=Date.now();if(now-lastPing<60000)return;lastPing=now;try{await checkSession();}catch{expire();}}
 (async()=>{try{await checkSession();lastPing=Date.now();}catch{expire();}})();
-["pointerdown","keydown","scroll","touchstart","click"].forEach(type=>document.addEventListener(type,activityPing,{passive:true}));
+["pointerdown","keydown","scroll","touchstart","click"].forEach(type=>document.addEventListener(type,()=>{resetIdleTimer();activityPing();},{passive:true}));
+resetIdleTimer();
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)activityPing();});
 document.getElementById("logout").addEventListener("click",async()=>{expired=true;await fetch("/api/auth/logout",{method:"POST",credentials:"same-origin"});location.replace("/admin/login/");});
 </script></body></html>
