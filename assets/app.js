@@ -14,7 +14,7 @@ if(year)year.textContent=new Date().getFullYear();
   function makeHeadline(item){
     const link=document.createElement('a');
     link.className='ticker-item';
-    link.href='news.html?title='+encodeURIComponent(item.title)+'&url='+encodeURIComponent(item.link)+'&source='+encodeURIComponent(item.source||'')+'&category='+encodeURIComponent(item.categoryLabel||item.category||'News');
+    link.href='news.html?title='+encodeURIComponent(item.title)+'&url='+encodeURIComponent(item.link)+'&source='+encodeURIComponent(item.source||'')+'&category='+encodeURIComponent(item.categoryLabel||item.category||'News')+'&description='+encodeURIComponent(item.description||'')+'&lang='+encodeURIComponent(track===hindiTrack?'hi':'en');
     link.title=(item.source?item.source+' — ':'')+item.title;
     const source=document.createElement('span');
     source.className='ticker-source';
