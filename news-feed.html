@@ -29,7 +29,7 @@
 <body><div class="topline">ताज़ा खबरें · Latest updates</div>
 <header class="site-header"><a class="brand" href="./"><span class="brand-mark">G</span><span>GovJob<span class="brand-accent">Mitra</span><small>Your guide to government opportunities</small></span></a><a class="back-home" href="./">← Home</a></header>
 <main class="news-feed-wrap">
-<div class="news-feed-head"><div><span class="eyebrow">NEWS & KNOWLEDGE</span><h1>News & GK</h1><p>Hindi aur English mein latest updates — apni category select karein.</p></div><span class="muted" id="feedStatus">Loading latest news…</span></div>
+<div class="news-feed-head"><div><span class="eyebrow">NEWS & KNOWLEDGE</span><h1>News & GK</h1><p>ताज़ा खबरें और करेंट अफेयर्स हिंदी में — अपनी श्रेणी चुनें।</p></div><span class="muted" id="feedStatus">Loading latest news…</span></div>
 <div class="news-categories" id="newsCategories">
 <button class="active" data-category="all">All News</button><button data-category="gk">GK & Current Affairs</button><button data-category="sports">Sports</button><button data-category="politics">Politics</button><button data-category="world">World</button><button data-category="weather">Weather</button>
 </div>
@@ -56,7 +56,7 @@ function render(){
   const h=document.createElement('h2');h.textContent=x.title;
   const p=document.createElement('p');p.textContent=x.description||'Read this latest update on GovJobMitra.';
   const foot=document.createElement('div');foot.className='news-feed-read';
-  const language=document.createElement('span');language.textContent=x.lang==='hi'?'हिंदी':'English';
+  const language=document.createElement('span');language.textContent='हिंदी';
   const a=document.createElement('a');a.href=articleUrl(x);a.textContent='Read update →';
   foot.append(language,a);card.append(meta,h,p,foot);grid.append(card);
  });
@@ -66,5 +66,5 @@ categoryBar.addEventListener('click',e=>{const btn=e.target.closest('button[data
 prev.addEventListener('click',()=>{if(page>1){page--;render();window.scrollTo({top:0,behavior:'smooth'});}});
 next.addEventListener('click',()=>{page++;render();window.scrollTo({top:0,behavior:'smooth'});});
 document.getElementById('year').textContent=new Date().getFullYear();
-(async()=>{try{const r=await fetch('/api/news',{cache:'no-store'});if(!r.ok)throw Error('Feed request failed');const data=await r.json();const combine=(data.hindi||[]).map(x=>({...x,lang:'hi'})).concat((data.english||[]).map(x=>({...x,lang:'en'})));const seen=new Set();all=combine.filter(x=>{const key=(x.title||'').toLocaleLowerCase().trim();if(!key||seen.has(key))return false;seen.add(key);return ['gk','sports','politics','world','weather'].includes(x.category);});all.sort((a,b)=>(Date.parse(b.publishedAt)||0)-(Date.parse(a.publishedAt)||0));statusEl.textContent=all.length+' updates available';render();}catch(err){statusEl.textContent='News feed temporarily unavailable';grid.innerHTML='<article class="empty-state news-feed-empty"><div class="empty-icon">!</div><h3>News could not be loaded</h3><p>Please refresh the page in a moment.</p></article>';console.error(err);}})();
+(async()=>{try{const r=await fetch('/api/news',{cache:'no-store'});if(!r.ok)throw Error('Feed request failed');const data=await r.json();const combine=(data.hindi||[]).map(x=>({...x,lang:'hi'}));const seen=new Set();all=combine.filter(x=>{const key=(x.title||'').toLocaleLowerCase().trim();if(!key||seen.has(key))return false;seen.add(key);return ['gk','sports','politics','world','weather'].includes(x.category);});all.sort((a,b)=>(Date.parse(b.publishedAt)||0)-(Date.parse(a.publishedAt)||0));statusEl.textContent=all.length+' updates available';render();}catch(err){statusEl.textContent='News feed temporarily unavailable';grid.innerHTML='<article class="empty-state news-feed-empty"><div class="empty-icon">!</div><h3>News could not be loaded</h3><p>Please refresh the page in a moment.</p></article>';console.error(err);}})();
 </script></body></html>
