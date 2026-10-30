@@ -48,16 +48,10 @@ async function collectEnglish(){
  ];
  return filterAndMerge(await Promise.all(feeds),35);
 }
-const unwanted=/\\b(murder|rape|robbery|theft|kidnap|crime|criminal|accident|shootout|stabbing|suicide|dead body|dacoity|loot|assault)\\b|हत्या|बलात्कार|लूट|डकैती|चोरी|अपहरण|दुष्कर्म|हादसा|एक्सीडेंट|शव|आत्महत्या|मारपीट/i;
+const unwanted=/\b(murder|rape|robbery|theft|kidnap|crime|criminal|accident|shootout|stabbing|suicide|dead body|dacoity|loot|assault)\b|हत्या|बलात्कार|लूट|डकैती|चोरी|अपहरण|दुष्कर्म|हादसा|एक्सीडेंट|शव|आत्महत्या|मारपीट/i;
 function filterAndMerge(groups,limit){
- const seen=new Set(),result=[];
- for(const items of groups)for(const item of items){
-  const text=item.title+" "+item.description;
-  if(unwanted.test(text))continue;
-  const key=item.title.toLocaleLowerCase();
-  if(!seen.has(key)){seen.add(key);result.push(item);}
-  if(result.length>=limit)return result;
- }
+ const seen=new Set(),result=[];let cursor=0,added=true;
+ while(result.length<limit&&added){added=false;for(const items of groups){if(cursor>=items.length)continue;const item=items[cursor];if(!item)continue;const text=item.title+" "+item.description;if(unwanted.test(text))continue;const key=item.title.toLocaleLowerCase();if(!seen.has(key)){seen.add(key);result.push(item);added=true;if(result.length>=limit)break;}}cursor++;}
  return result;
 }
 function merge(groups,limit){const seen=new Set(),result=[];for(const items of groups)for(const item of items){const key=item.title.toLocaleLowerCase();if(!seen.has(key)){seen.add(key);result.push(item);}if(result.length>=limit)return result;}return result;}
