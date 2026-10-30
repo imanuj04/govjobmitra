@@ -13,7 +13,7 @@ export async function onRequestGet({request,env}){
   const key=await crypto.subtle.importKey("raw",new TextEncoder().encode(env.SESSION_SECRET),{name:"HMAC",hash:"SHA-256"},false,["verify"]);
   const valid=await crypto.subtle.verify("HMAC",key,dec(sig),new TextEncoder().encode(data));
   const c=JSON.parse(new TextDecoder().decode(dec(data))),now=Math.floor(Date.now()/1000);
-  if(!valid||c.email!=="dixit.anuj04@gmail.com"||!Number.isFinite(c.exp)||!Number.isFinite(c.lastActivity)||c.exp<now||now-c.lastActivity>IDLE_SECONDS)throw Error("expired");
+  if(!valid||c.email!=="dixit.anuj04@gmail.com"||!Number.isFinite(c.exp)||!Number.isFinite(c.lastActivity)||c.exp<now||now-c.lastActivity>=IDLE_SECONDS)throw Error("expired");
   const refreshed={...c,lastActivity:now};
   const updated=await sign(refreshed,env.SESSION_SECRET);
   const maxAge=Math.max(0,Math.min(c.exp-now,IDLE_SECONDS));
