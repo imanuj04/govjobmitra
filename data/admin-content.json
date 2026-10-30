@@ -1,24 +1,6 @@
 {
   "drafts": [
     {
-      "id": "49142c64-af7e-4c49-a0ea-15f6e34475cf",
-      "type": "Exam Result",
-      "title": "ssc",
-      "slug": "ssc-com",
-      "department": "",
-      "lastDate": "",
-      "notificationUrl": "",
-      "applyUrl": "",
-      "excerpt": "test 2",
-      "body": "test",
-      "imageUrl": "https://ss.com/",
-      "tags": [
-        "ssc"
-      ],
-      "seo": "test",
-      "updatedAt": "2026-10-30T20:50:27.234Z"
-    },
-    {
       "id": "09bcf6e3-e13a-4ddd-8b46-bcb3c6544e16",
       "type": "Government Vacancy",
       "title": "ssc",
@@ -59,6 +41,11 @@
   "scheduled": [],
   "pending": [],
   "activity": [
+    {
+      "action": "deleteDraft",
+      "detail": "Draft deleted",
+      "at": "2026-10-30T21:04:32.506Z"
+    },
     {
       "action": "saveDraft",
       "detail": "Draft saved to GitHub",
