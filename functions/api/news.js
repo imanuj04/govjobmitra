@@ -56,6 +56,17 @@ async function collect(language, limit = 45) {
     ? "https://pib.gov.in/RssMain.aspx?ModId=6&Lang=1&Regid=3"
     : "https://pib.gov.in/RssMain.aspx?ModId=6&Lang=2&Regid=3";
   tasks.splice(2, 0, readFeed(officialUrl, "government", "Government & Policy"));
+  // Reliable publisher fallbacks: keep useful India/world coverage if a topic query is blocked.
+  const fallbackFeeds = language === "hindi"
+    ? [
+        ["https://feeds.bbci.co.uk/hindi/rss.xml", "world", "भारत और दुनिया"],
+        ["https://www.aajtak.in/rssfeeds/?id=home", "government", "ताज़ा खबरें"]
+      ]
+    : [
+        ["https://feeds.bbci.co.uk/news/india/rss.xml", "government", "India"],
+        ["https://feeds.bbci.co.uk/news/world/rss.xml", "world", "World"]
+      ];
+  fallbackFeeds.forEach(([url, category, label]) => tasks.push(readFeed(url, category, label)));
   const batches = await Promise.allSettled(tasks);
   const seen = new Set(), result = [];
   for (const batch of batches) {
