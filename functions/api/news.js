@@ -25,13 +25,18 @@ function googleFeed(query,lang,category,label){
 async function collectHindi(){
  const feeds=[
   googleFeed("भारत राजनीति OR संसद OR सरकार OR चुनाव","hi","politics","राजनीति"),
+  safeFeed("https://feeds.bbci.co.uk/hindi/rss.xml","world","दुनिया और समाचार"),
+  safeFeed("https://hindi.oneindia.com/rss/feeds/hindi-news-fb.xml","politics","राजनीति और देश"),
   googleFeed("भारत खेल OR क्रिकेट OR हॉकी OR बैडमिंटन OR टेनिस","hi","sports","खेल"),
+  safeFeed("https://hindi.oneindia.com/rss/feeds/hindi-sports-fb.xml","sports","खेल"),
   googleFeed("विश्व समाचार OR अंतरराष्ट्रीय","hi","world","दुनिया"),
+  safeFeed("https://hindi.oneindia.com/rss/feeds/hindi-international-fb.xml","world","दुनिया"),
   googleFeed("भारत मौसम OR मौसम विभाग OR IMD बारिश OR मानसून","hi","weather","मौसम"),
   googleFeed("भारत सामान्य ज्ञान OR करेंट अफेयर्स OR विज्ञान OR अंतरिक्ष OR पुरस्कार OR नियुक्ति","hi","gk","GK और करेंट अफेयर्स"),
+  googleFeed("आज के करेंट अफेयर्स सामान्य ज्ञान विज्ञान खोज भारत हिंदी","hi","gk","GK और करेंट अफेयर्स"),
   safeFeed("https://www.bhaskar.com/rss-v1--category-1061.xml","gk","GK और करेंट अफेयर्स")
  ];
- return filterAndMerge(await Promise.all(feeds),35);
+ const groups=await Promise.all(feeds);\n return filterAndMerge(groups.map(items=>items.filter(item=>/[\\u0900-\\u097F]/.test(item.title))),50);
 }
 async function collectEnglish(){
  const feeds=[
