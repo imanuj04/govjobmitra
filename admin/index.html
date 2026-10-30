@@ -147,4 +147,39 @@ document.getElementById("today").textContent=new Intl.DateTimeFormat("en-IN",{da
 ["pointerdown","keydown","scroll","touchstart","click"].forEach(type=>document.addEventListener(type,()=>{resetIdleTimer();activityPing()},{passive:true}));resetIdleTimer();document.addEventListener("visibilitychange",()=>{if(!document.hidden)activityPing()});
 document.getElementById("logout").addEventListener("click",async()=>{expired=true;await fetch("/api/auth/logout",{method:"POST",credentials:"same-origin"});location.replace("/admin/login/")});
 </script>
+
+<script>
+(function(){
+ const view=document.getElementById('view-news');if(!view)return;
+ const panel=document.createElement('div');panel.className='panel';panel.id='publishedManager';panel.style.marginTop='16px';
+ const head=document.createElement('div');head.className='panel-head';const h=document.createElement('h3');h.textContent='Published posts';const count=document.createElement('span');count.id='publishedCount';count.textContent='Loading…';head.append(h,count);panel.append(head);
+ const note=document.createElement('div');note.className='info-note';note.textContent='Yahan public website par live posts dikhenge. Delete karne par post public API se hat jayegi. Delete action confirm karne ke baad hi chalega.';panel.append(note);
+ const list=document.createElement('div');list.id='publishedList';panel.append(list);view.append(panel);
+ function row(post){
+  const item=document.createElement('div');item.className='security-row';item.style.alignItems='center';
+  const info=document.createElement('div');info.style.flex='1';const title=document.createElement('b');title.textContent=post.title||'(Untitled post)';
+  const meta=document.createElement('div');meta.className='tiny';meta.textContent=(post.type||'Post')+' · '+(post.publishedAt?new Date(post.publishedAt).toLocaleString('en-IN'):'Published');
+  info.append(title,meta);
+  const actions=document.createElement('div');actions.style.display='flex';actions.style.gap='7px';actions.style.flexWrap='wrap';
+  const open=document.createElement('a');open.className='filter';open.href='/post.html?slug='+encodeURIComponent(post.slug||'');open.target='_blank';open.rel='noopener';open.textContent='View';
+  const del=document.createElement('button');del.className='filter';del.type='button';del.textContent='Delete';del.style.color='#b42318';del.addEventListener('click',async()=>{
+   if(!confirm('Is published post ko website se permanently remove karna hai?'))return;
+   del.disabled=true;del.textContent='Deleting…';
+   try{const result=await api('deletePublished',{id:post.id});await loadAdminData();alert(result.message||'Post deleted');}
+   catch(e){del.disabled=false;del.textContent='Delete';alert(e.message);}
+  });
+  actions.append(open,del);item.append(info,actions);return item;
+ }
+ window.paintPublishedManager=function(){
+  list.replaceChildren();const posts=adminStore.published||[];count.textContent=posts.length+' published';
+  if(!posts.length){const empty=document.createElement('div');empty.className='empty';empty.textContent='Abhi koi published post nahi hai.';list.append(empty);return;}
+  posts.forEach(post=>list.append(row(post)));
+ };
+ const oldLoad=window.loadAdminData;
+ if(typeof oldLoad==='function'){
+  window.loadAdminData=async function(){await oldLoad();window.paintPublishedManager();};
+ }
+ window.paintPublishedManager();
+})();
+</script>
 </body></html>
