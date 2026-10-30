@@ -4,7 +4,7 @@ const ADMIN="dixit.anuj04@gmail.com";
 function cookies(h){const o={};for(const x of (h||"").split(";")){const i=x.indexOf("=");if(i>0)o[x.slice(0,i).trim()]=x.slice(i+1).trim();}return o;}
 function dec(s){s=s.replace(/-/g,"+").replace(/_/g,"/");while(s.length%4)s+="=";return Uint8Array.from(atob(s),c=>c.charCodeAt(0));}
 function json(s){return JSON.parse(new TextDecoder().decode(dec(s)));}
-function b64(a){return btoa(String.fromCharCode(...new Uint8Array(a))).replace(/\\+/g,"-").replace(/\\//g,"_").replace(/=+$/,"");}
+function b64(a){return btoa(String.fromCharCode(...new Uint8Array(a))).split("+").join("-").split("/").join("_").replace(/=+$/,"");}
 async function makeSession(data,secret){const raw=b64(new TextEncoder().encode(JSON.stringify(data)));const key=await crypto.subtle.importKey("raw",new TextEncoder().encode(secret),{name:"HMAC",hash:"SHA-256"},false,["sign"]);const sig=b64(await crypto.subtle.sign("HMAC",key,new TextEncoder().encode(raw)));return raw+"."+sig;}
 async function verifyId(token,nonce){
  const p=token.split(".");if(p.length!==3)throw Error("id_token_format");
