@@ -53,7 +53,7 @@ function render(){
   const tag=document.createElement('span');tag.className='news-feed-label';tag.textContent=categoryNames[x.category]||'News & GK';
   const date=document.createElement('span');date.textContent=x.publishedAt&&!Number.isNaN(Date.parse(x.publishedAt))?new Date(x.publishedAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'Latest';
   meta.append(tag,date);
-  const h=document.createElement('h2');const titleLink=document.createElement('a');titleLink.href=x.link;titleLink.target='_blank';titleLink.rel='noopener noreferrer';titleLink.textContent=x.title;titleLink.title='पूरा लेख पढ़ें';h.append(titleLink);
+  const h=document.createElement('h2');const titleLink=document.createElement('a');titleLink.href=articleUrl(x);titleLink.textContent=x.title;titleLink.title='GovJobMitra पर पूरा अपडेट पढ़ें';h.append(titleLink);
   const p=document.createElement('p');p.textContent=x.description||'Read this latest update on GovJobMitra.';
   const foot=document.createElement('div');foot.className='news-feed-read';
   const language=document.createElement('span');language.textContent='हिंदी';
