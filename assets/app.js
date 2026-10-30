@@ -4,7 +4,7 @@ const year=document.getElementById('year');if(year)year.textContent=new Date().g
  const hindiTrack=document.getElementById('tickerHindi'),englishTrack=document.getElementById('tickerEnglish'),status=document.getElementById('tickerStatus');if(!hindiTrack||!englishTrack)return;
  function makeHeadline(item,track){
   const link=document.createElement('a');link.className='ticker-item';
-  link.href='news.html?title='+encodeURIComponent(item.title)+'&url='+encodeURIComponent(item.link)+'&source='+encodeURIComponent(item.source||'')+'&category='+encodeURIComponent(item.categoryLabel||item.category||'News')+'&description='+encodeURIComponent(item.description||'')+'&content='+encodeURIComponent(item.content||'')+'&date='+encodeURIComponent(item.publishedAt||'')+'&image='+encodeURIComponent(item.image||'')+'&lang='+encodeURIComponent(track===hindiTrack?'hi':'en');
+  link.href='news.html?title='+encodeURIComponent(item.title)+'&url='+encodeURIComponent(item.link)+'&source='+encodeURIComponent(item.source||'')+'&category='+encodeURIComponent(item.categoryLabel||item.category||'News')+'&description='+encodeURIComponent(item.description||'')+'&content='+encodeURIComponent(item.fullContent||'')+'&date='+encodeURIComponent(item.publishedAt||'')+'&image='+encodeURIComponent(item.image||'')+'&lang='+encodeURIComponent(track===hindiTrack?'hi':'en');
   link.title=item.title;const title=document.createElement('span');title.textContent=item.title;link.append(title);return link;
  }
  function render(track,items,emptyText){
