@@ -2,8 +2,10 @@ function parseCookies(header){const out={};for(const part of (header||"").split(
 function decode64url(value){value=value.replace(/-/g,"+").replace(/_/g,"/");while(value.length%4)value+="=";return Uint8Array.from(atob(value),c=>c.charCodeAt(0));}
 function redirectLogin(){return new Response(null,{status:302,headers:{Location:"/admin/login/", "Cache-Control":"no-store","Set-Cookie":"gjm_admin_session=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0"}});}
 export async function onRequest(context){
- const url=new URL(context.request.url);
- if(!(url.pathname==="/admin"||url.pathname==="/admin/"||url.pathname==="/admin/index.html"))return context.next();
+ const url=new URL(context.request.url),path=url.pathname;
+ const isAdmin=path==="/admin"||path.startsWith("/admin/");
+ const isLogin=path==="/admin/login"||path==="/admin/login/"||path==="/admin/login.html";
+ if(!isAdmin||isLogin)return context.next();
  const token=parseCookies(context.request.headers.get("Cookie")).gjm_admin_session;
  if(!token||!context.env.SESSION_SECRET)return redirectLogin();
  try{
