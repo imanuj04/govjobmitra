@@ -1,16 +1,15 @@
-const FEEDS = {
-  hindi: [
-    "https://feeds.bbci.co.uk/hindi/rss.xml",
-    "https://www.aajtak.in/rssfeeds/?id=home",
-    "https://pib.gov.in/RssMain.aspx?ModId=6&Lang=1&Regid=3",
-    "https://news.google.com/rss?hl=hi&gl=IN&ceid=IN:hi"
-  ],
-  english: [
-    "https://feeds.bbci.co.uk/news/india/rss.xml",
-    "https://feeds.bbci.co.uk/news/world/rss.xml",
-    "https://pib.gov.in/RssMain.aspx?ModId=6&Lang=2&Regid=3",
-    "https://news.google.com/rss?hl=en-IN&gl=IN&ceid=IN:en"
-  ]
+const TOPICS = [
+  { key: "jobs", label: "Jobs & Recruitment", query: '"government jobs" OR recruitment OR vacancy OR UPSC OR SSC OR railway jobs' },
+  { key: "exams", label: "Exams & Results", query: '"exam notification" OR "exam result" OR "admit card" OR "answer key" OR entrance exam' },
+  { key: "government", label: "Government & Policy", query: 'government policy OR ministry OR parliament OR cabinet OR public scheme' },
+  { key: "world", label: "World & Politics", query: '"world politics" OR election OR parliament OR diplomacy OR international policy' },
+  { key: "weather", label: "Weather & Alerts", query: '"weather alert" OR cyclone OR rainfall OR heatwave OR flood OR storm' },
+  { key: "sports", label: "Sports", query: 'sports OR cricket OR football OR Olympics OR tournament OR championship' }
+];
+
+const LANGS = {
+  hindi: { hl: "hi", ceid: "IN:hi" },
+  english: { hl: "en-IN", ceid: "IN:en" }
 };
 
 function decodeEntities(value) {
@@ -27,27 +26,37 @@ function readTag(xml, name) {
   const match = xml.match(new RegExp("<" + name + "(?:\\s[^>]*)?>([\\s\\S]*?)</" + name + ">", "i"));
   return match ? clean(match[1]) : "";
 }
-async function readFeed(url) {
+async function readFeed(url, category, categoryLabel) {
   const response = await fetch(url, {
     headers: { "User-Agent": "Mozilla/5.0 (compatible; GovJobMitra/1.0)", "Accept": "application/rss+xml, application/atom+xml, application/xml, text/xml" },
     cf: { cacheTtl: 300, cacheEverything: true }
   });
-  if (!response.ok) throw new Error("HTTP " + response.status);
+  if (!response.ok) throw new Error("RSS HTTP " + response.status);
   const xml = await response.text();
-  if (!/<(?:rss|feed|rdf:RDF)\b/i.test(xml)) throw new Error("Not an RSS/Atom document");
-  const blocks = [...xml.matchAll(/<(item|entry)(?:\s[^>]*)?>([\s\S]*?)<\/\1>/gi)];
-  return blocks.map(match => {
-    const raw = match[2];
-    const title = readTag(raw, "title");
+  if (!/<(?:rss|feed|rdf:RDF)\b/i.test(xml)) throw new Error("Not RSS");
+  return [...xml.matchAll(/<(item|entry)(?:\s[^>]*)?>([\s\S]*?)<\/\1>/gi)].map(match => {
+    const raw = match[2], title = readTag(raw, "title");
     const linkText = readTag(raw, "link");
     const linkAttr = (raw.match(/<link\b[^>]*\bhref=["']([^"']+)["']/i) || [])[1] || "";
     const link = linkText || linkAttr;
     const source = readTag(raw, "source") || readTag(raw, "author");
-    return { title, link: link.trim(), source };
+    const description = readTag(raw, "description") || readTag(raw, "summary");
+    return { title, link: link.trim(), source, description, category, categoryLabel };
   }).filter(x => x.title && /^https?:\/\//i.test(x.link));
 }
-async function collect(urls, limit = 20) {
-  const batches = await Promise.allSettled(urls.map(readFeed));
+async function collect(language, limit = 45) {
+  const lang = LANGS[language];
+  const tasks = TOPICS.map(topic => {
+    const q = encodeURIComponent(topic.query);
+    const url = "https://news.google.com/rss/search?q=" + q + "&hl=" + lang.hl + "&gl=IN&ceid=" + lang.ceid;
+    return readFeed(url, topic.key, topic.label);
+  });
+  // Include a primary official government information feed for government/policy updates.
+  const officialUrl = language === "hindi"
+    ? "https://pib.gov.in/RssMain.aspx?ModId=6&Lang=1&Regid=3"
+    : "https://pib.gov.in/RssMain.aspx?ModId=6&Lang=2&Regid=3";
+  tasks.splice(2, 0, readFeed(officialUrl, "government", "Government & Policy"));
+  const batches = await Promise.allSettled(tasks);
   const seen = new Set(), result = [];
   for (const batch of batches) {
     if (batch.status !== "fulfilled") continue;
@@ -60,7 +69,7 @@ async function collect(urls, limit = 20) {
   return result;
 }
 export async function onRequestGet() {
-  const [hindi, english] = await Promise.all([collect(FEEDS.hindi), collect(FEEDS.english)]);
+  const [hindi, english] = await Promise.all([collect("hindi"), collect("english")]);
   return Response.json({ hindi, english, updatedAt: new Date().toISOString() }, {
     headers: { "Cache-Control": "public, max-age=300, s-maxage=300", "Access-Control-Allow-Origin": "*" }
   });
