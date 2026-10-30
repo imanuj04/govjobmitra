@@ -1,6 +1,7 @@
 const CLIENT_ID="362940858298-7reo9cqetso191k2om66ohsnp6kk60a4.apps.googleusercontent.com";
 const REDIRECT_URI="https://govjobmitra.pages.dev/api/auth/google/callback";
 const ADMIN="dixit.anuj04@gmail.com";
+const SESSION_SECONDS=8*60*60;
 function cookies(h){const o={};for(const x of (h||"").split(";")){const i=x.indexOf("=");if(i>0)o[x.slice(0,i).trim()]=x.slice(i+1).trim();}return o;}
 function dec(s){s=s.replace(/-/g,"+").replace(/_/g,"/");while(s.length%4)s+="=";return Uint8Array.from(atob(s),c=>c.charCodeAt(0));}
 function json(s){return JSON.parse(new TextDecoder().decode(dec(s)));}
@@ -8,12 +9,9 @@ function b64(a){return btoa(String.fromCharCode(...new Uint8Array(a))).split("+"
 async function makeSession(data,secret){const raw=b64(new TextEncoder().encode(JSON.stringify(data)));const key=await crypto.subtle.importKey("raw",new TextEncoder().encode(secret),{name:"HMAC",hash:"SHA-256"},false,["sign"]);const sig=b64(await crypto.subtle.sign("HMAC",key,new TextEncoder().encode(raw)));return raw+"."+sig;}
 async function verifyId(token,nonce){
  const p=token.split(".");if(p.length!==3)throw Error("id_token_format");
- const h=json(p[0]),c=json(p[1]);
- if(h.alg!=="RS256")throw Error("id_token_algorithm");
- const response=await fetch("https://www.googleapis.com/oauth2/v3/certs");
- if(!response.ok)throw Error("google_jwks_http_"+response.status);
- const jwks=await response.json(),jwk=jwks.keys.find(k=>k.kid===h.kid);
- if(!jwk)throw Error("google_signing_key_not_found");
+ const h=json(p[0]),c=json(p[1]);if(h.alg!=="RS256")throw Error("id_token_algorithm");
+ const response=await fetch("https://www.googleapis.com/oauth2/v3/certs");if(!response.ok)throw Error("google_jwks_http_"+response.status);
+ const jwks=await response.json(),jwk=jwks.keys.find(k=>k.kid===h.kid);if(!jwk)throw Error("google_signing_key_not_found");
  const key=await crypto.subtle.importKey("jwk",jwk,{name:"RSASSA-PKCS1-v1_5",hash:"SHA-256"},false,["verify"]);
  const ok=await crypto.subtle.verify("RSASSA-PKCS1-v1_5",key,dec(p[2]),new TextEncoder().encode(p[0]+"."+p[1]));
  const now=Math.floor(Date.now()/1000);
@@ -43,9 +41,9 @@ export async function onRequestGet({request,env}){
   const user=await verifyId(t.id_token,ck.gjm_oauth_nonce);
   if((user.email||"").toLowerCase()!==ADMIN)return fail("This Google account is not authorized for administration.",403);
   stage="session_creation";
-  const now=Math.floor(Date.now()/1000),session=await makeSession({email:ADMIN,name:user.name||"Administrator",sub:user.sub,iat:now,exp:now+28800},env.SESSION_SECRET);
+  const now=Math.floor(Date.now()/1000),session=await makeSession({email:ADMIN,name:user.name||"Administrator",sub:user.sub,iat:now,lastActivity:now,exp:now+SESSION_SECONDS},env.SESSION_SECRET);
   const h=new Headers({Location:"https://govjobmitra.pages.dev/admin/","Cache-Control":"no-store"});
-  h.append("Set-Cookie","gjm_admin_session="+session+"; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=28800");
+  h.append("Set-Cookie","gjm_admin_session="+session+"; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age="+SESSION_SECONDS);
   for(const x of clear)h.append("Set-Cookie",x);
   return new Response(null,{status:302,headers:h});
  }catch(e){
