@@ -16,7 +16,7 @@
 .ticker-language.english{font-family:'DM Sans',sans-serif;color:var(--blue);font-size:10px;letter-spacing:.6px}
 .ticker-window{overflow:hidden;white-space:nowrap;flex:1;min-width:0}
 .ticker-track{display:flex;width:max-content;align-items:center}
-.ticker-group{display:flex;align-items:center;flex:none;animation:ticker-scroll 95s linear infinite}
+.ticker-group{display:flex;align-items:center;flex:none;animation:ticker-scroll 180s linear infinite}
 .ticker-lane:hover .ticker-group{animation-play-state:paused}
 .ticker-item{display:inline-flex;align-items:center;gap:8px;padding:0 24px;border-right:1px solid #e8edf4;color:#334155;text-decoration:none;font-size:12px;white-space:nowrap;max-width:620px}
 .ticker-item:hover{color:var(--blue);text-decoration:underline}
