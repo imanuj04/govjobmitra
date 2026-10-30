@@ -1,13 +1,15 @@
 const FEEDS = {
   hindi: [
-    "https://news.google.com/rss?hl=hi&gl=IN&ceid=IN:hi",
-    "https://news.google.com/rss/search?q=India+government+education+jobs&hl=hi&gl=IN&ceid=IN:hi",
-    "https://news.google.com/rss/search?q=India+breaking+news&hl=hi&gl=IN&ceid=IN:hi"
+    "https://feeds.bbci.co.uk/hindi/rss.xml",
+    "https://www.aajtak.in/rssfeeds/?id=home",
+    "https://pib.gov.in/RssMain.aspx?ModId=6&Lang=1&Regid=3",
+    "https://news.google.com/rss?hl=hi&gl=IN&ceid=IN:hi"
   ],
   english: [
-    "https://news.google.com/rss?hl=en-IN&gl=IN&ceid=IN:en",
-    "https://news.google.com/rss/search?q=India+government+education+technology&hl=en-IN&gl=IN&ceid=IN:en",
-    "https://news.google.com/rss/search?q=world+business+sports+India&hl=en-IN&gl=IN&ceid=IN:en"
+    "https://feeds.bbci.co.uk/news/india/rss.xml",
+    "https://feeds.bbci.co.uk/news/world/rss.xml",
+    "https://pib.gov.in/RssMain.aspx?ModId=6&Lang=2&Regid=3",
+    "https://news.google.com/rss?hl=en-IN&gl=IN&ceid=IN:en"
   ]
 };
 
@@ -17,30 +19,40 @@ function decodeEntities(value) {
     .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
     .replace(/&#x([\da-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)));
 }
-function tag(item, name) {
-  const match = item.match(new RegExp("<" + name + "(?:\\s[^>]*)?>([\\s\\S]*?)</" + name + ">", "i"));
-  return match ? decodeEntities(match[1].replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1").trim()) : "";
+function clean(value) {
+  return decodeEntities(value.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
+    .replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim());
+}
+function readTag(xml, name) {
+  const match = xml.match(new RegExp("<" + name + "(?:\\s[^>]*)?>([\\s\\S]*?)</" + name + ">", "i"));
+  return match ? clean(match[1]) : "";
 }
 async function readFeed(url) {
-  const response = await fetch(url, { headers: { "User-Agent": "GovJobMitraNewsTicker/1.0", "Accept": "application/rss+xml, application/xml, text/xml" }, cf: { cacheTtl: 300, cacheEverything: true } });
-  if (!response.ok) throw new Error("RSS feed HTTP " + response.status);
+  const response = await fetch(url, {
+    headers: { "User-Agent": "Mozilla/5.0 (compatible; GovJobMitra/1.0)", "Accept": "application/rss+xml, application/atom+xml, application/xml, text/xml" },
+    cf: { cacheTtl: 300, cacheEverything: true }
+  });
+  if (!response.ok) throw new Error("HTTP " + response.status);
   const xml = await response.text();
-  const items = [...xml.matchAll(/<item(?:\s[^>]*)?>([\s\S]*?)<\/item>/gi)].map(match => {
-    const raw = match[1];
-    const title = tag(raw, "title");
-    const link = tag(raw, "link") || ((raw.match(/<link[^>]*href=["']([^"']+)["']/i) || [])[1] || "");
-    const source = tag(raw, "source");
-    return { title: title.replace(/\s+/g, " ").trim(), link: link.trim(), source: source.replace(/\s+/g, " ").trim() };
-  }).filter(x => x.title && /^https:\/\//i.test(x.link));
-  return items;
+  if (!/<(?:rss|feed|rdf:RDF)\b/i.test(xml)) throw new Error("Not an RSS/Atom document");
+  const blocks = [...xml.matchAll(/<(item|entry)(?:\s[^>]*)?>([\s\S]*?)<\/\1>/gi)];
+  return blocks.map(match => {
+    const raw = match[2];
+    const title = readTag(raw, "title");
+    const linkText = readTag(raw, "link");
+    const linkAttr = (raw.match(/<link\b[^>]*\bhref=["']([^"']+)["']/i) || [])[1] || "";
+    const link = linkText || linkAttr;
+    const source = readTag(raw, "source") || readTag(raw, "author");
+    return { title, link: link.trim(), source };
+  }).filter(x => x.title && /^https?:\/\//i.test(x.link));
 }
-async function collect(urls, limit = 18) {
+async function collect(urls, limit = 20) {
   const batches = await Promise.allSettled(urls.map(readFeed));
   const seen = new Set(), result = [];
   for (const batch of batches) {
     if (batch.status !== "fulfilled") continue;
     for (const item of batch.value) {
-      const key = item.title.toLowerCase();
+      const key = item.title.toLocaleLowerCase();
       if (!seen.has(key)) { seen.add(key); result.push(item); }
       if (result.length >= limit) return result;
     }
