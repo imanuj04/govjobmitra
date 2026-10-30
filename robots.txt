@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://govjobmitra.pages.dev/sitemap.xml

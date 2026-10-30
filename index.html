@@ -3,11 +3,35 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="GovJobMitra - Government job updates, results, admit card releases, schemes, education news and current affairs in Hindi and English.">
+  <meta name="description" content="Find the latest government job notifications, exam results, admit card updates, Sarkari Yojana and education news in Hindi and English with official source links.">
   <meta name="theme-color" content="#123b72">
-  <title>GovJobMitra | Government Jobs, Results & Updates</title>
+  <title>GovJobMitra | Government Jobs, Results & Admit Card Updates</title>
   <link rel="stylesheet" href="assets/style.css">
-</head>
+
+  <!-- SEO START -->
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="canonical" href="https://govjobmitra.pages.dev/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="GovJobMitra">
+  <meta property="og:title" content="GovJobMitra | Government Jobs, Results & Admit Card Updates">
+  <meta property="og:description" content="Find the latest government job notifications, exam results, admit card updates, Sarkari Yojana and education news in Hindi and English with official source links.">
+  <meta property="og:url" content="https://govjobmitra.pages.dev/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="GovJobMitra | Government Jobs, Results & Admit Card Updates">
+  <meta name="twitter:description" content="Find the latest government job notifications, exam results, admit card updates, Sarkari Yojana and education news in Hindi and English with official source links.">
+  <!-- SEO END -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "GovJobMitra",
+    "url": "https://govjobmitra.pages.dev/",
+    "description": "Government job notifications, results, admit card updates, schemes and education news in Hindi and English.",
+    "inLanguage": ["hi-IN", "en-IN"]
+  }
+  </script>
+
+  </head>
 <body>
   <div class="topline">Verified updates • Hindi & English • Official source links</div>
   <header class="site-header">
@@ -22,7 +46,17 @@
       <a href="#news">News & GK</a>
     </nav>
   </header>
+  <section class="news-ticker" aria-label="Latest Hindi and English news headlines">
+    <div class="ticker-heading"><span class="ticker-live-dot"></span><strong>LIVE HEADLINES</strong><small>ताज़ा खबरें • Latest News</small></div>
+    <div class="ticker-lanes">
+      <div class="ticker-lane"><span class="ticker-language">हिंदी</span><div class="ticker-window"><div class="ticker-track" id="tickerHindi"><span class="ticker-loading">हिंदी समाचार लोड हो रहे हैं…</span></div></div></div>
+      <div class="ticker-lane"><span class="ticker-language english">ENGLISH</span><div class="ticker-window"><div class="ticker-track" id="tickerEnglish"><span class="ticker-loading">Loading English headlines…</span></div></div></div>
+    </div>
+    <div class="ticker-footnote" id="tickerStatus">Headlines from news publishers and official sources · Click any headline to read the original report</div>
+  </section>
   <main>
+    <!-- Ad placements are pre-defined but hidden. No ads or ad scripts load until explicitly enabled. -->
+    <div class="ad-slot" data-ad-position="home-top" hidden aria-hidden="true"></div>
     <section class="hero">
       <div class="hero-copy">
         <span class="eyebrow">GOVERNMENT JOB & EDUCATION UPDATES</span>
@@ -59,11 +93,13 @@
           <button class="filter" data-filter="News & GK">News & GK</button>
         </div>
       </div>
+      <div class="ad-slot" data-ad-position="home-feed" hidden aria-hidden="true"></div>
       <div class="cards" id="articleGrid">
         <article class="empty-state"><div class="empty-icon">✎</div><h3>Articles will appear here</h3><p>We have created the website layout. Next, we will connect the article publishing workflow and add verified updates with official links.</p></article>
       </div>
     </section>
 
+    <div class="ad-slot" data-ad-position="home-bottom" hidden aria-hidden="true"></div>
     <section class="notice-strip">
       <div><b>Important:</b> Always verify eligibility, dates, fees and application instructions in the official notification.</div>
       <span>GovJobMitra is an independent information website.</span>
