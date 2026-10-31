@@ -51,7 +51,7 @@ function renderFeedHtml(html){
   if(node.nodeType!==Node.ELEMENT_NODE||!allowed.has(node.tagName)) {node.childNodes.forEach(child=>appendSafe(parent,child));return;}
   if(node.tagName==='IMG'){const src=node.getAttribute('src')||node.getAttribute('data-src')||'';if(/^https:\/\//i.test(src)){const img=document.createElement('img');img.src=src;img.alt=node.getAttribute('alt')||title;img.loading='lazy';img.className='news-inline-image';parent.append(img);}return;}
   const el=document.createElement(node.tagName.toLowerCase());
-  if(node.tagName==='A'){const href=node.getAttribute('href')||'';if(/^https:\/\//i.test(href)){el.href=href;el.rel='nofollow noopener';el.target='_blank';}}
+  // Keep article reading on GovJobMitra; never send readers to a third-party article.
   node.childNodes.forEach(child=>appendSafe(el,child));parent.append(el);
  }
  doc.body.childNodes.forEach(node=>appendSafe(body,node));
@@ -89,8 +89,7 @@ async function loadArticle(){
    addHeading(hi?'अक्सर पूछे जाने वाले सवाल':'Frequently asked questions');
    const qa=hi?[[ 'यह खबर किस बारे में है?',title],[ 'इसकी आधिकारिक जानकारी कहां मिलेगी?','संबंधित विभाग, संस्था या आधिकारिक वेबसाइट के अपडेट में इसकी पुष्टि करें।'],[ 'क्या इस जानकारी पर तुरंत कार्रवाई करनी चाहिए?','पहले मूल रिपोर्ट और संबंधित आधिकारिक सूचना की पुष्टि करें।']]:[['What is this news about?',title],['Where can I verify the details?','Check the relevant department, organisation or official website for confirmation.'],['Should I act on this update immediately?','Verify the original report and any relevant official notice first.']];
    qa.forEach(([q,a])=>{const h=document.createElement('h3');h.className='news-subhead';h.textContent=q;body.append(h);addPara(a);});
-   const note=document.createElement('p');note.className='news-reading-label';note.textContent=hi?'GovJobMitra सारांश: यह लेख उपलब्ध RSS विवरण और स्रोत पेज के सार्वजनिक शीर्षकों पर आधारित है। पूर्ण रिपोर्ट के लिए मूल स्रोत देखें।':'GovJobMitra summary: This article is based on the available feed description and public headings from the source page. Read the original report for the full story.';body.append(note);
-   const link=document.createElement('a');link.href=articleUrl;link.target='_blank';link.rel='noopener noreferrer';link.className='news-source-link';link.textContent=hi?'मूल रिपोर्ट पढ़ें →':'Read original report →';const wrap=document.createElement('p');wrap.className='news-read-more';wrap.append(link);body.append(wrap);
+   const note=document.createElement('p');note.className='news-reading-label';note.textContent=hi?'GovJobMitra पर तैयार किया गया समाचार-सार और उपयोगी संदर्भ।':'A GovJobMitra news brief with useful context.';body.append(note);
    const seoDescription=(summary||title).slice(0,155);addSeoMeta('description',seoDescription);addSeoMeta('keywords',[title,category,'GovJobMitra','Hindi news','current affairs'].join(', '));
    let canonical=document.querySelector('link[rel="canonical"]');if(!canonical){canonical=document.createElement('link');canonical.rel='canonical';document.head.append(canonical);}canonical.href=location.href.split('#')[0];
    addSeoMeta('og:title',title+' | GovJobMitra',true);addSeoMeta('og:description',seoDescription,true);
