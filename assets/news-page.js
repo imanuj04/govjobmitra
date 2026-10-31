@@ -38,7 +38,7 @@ function addOriginalBiharPmkisanArticle(){
  [['PM Kisan की 24वीं किस्त कब जारी हुई?','24वीं किस्त 30 अक्टूबर 2026 को जारी की गई।'],['बिहार के किसानों को कुल कितनी राशि मिली?','बिहार के 73 लाख से अधिक किसान परिवारों के लिए ₹1,476 करोड़ जारी किए गए।'],['एक किसान परिवार को कितने रुपये मिलते हैं?','पात्र किसान परिवार को प्रत्येक किस्त में ₹2,000 और सालाना कुल ₹6,000 मिलते हैं।'],['किस्त का स्टेटस कहां चेक करें?','लाभार्थी आधिकारिक वेबसाइट pmkisan.gov.in पर Know Your Status विकल्प से भुगतान की स्थिति देख सकते हैं।'],['e-KYC जरूरी है क्या?','हां, PM-KISAN के लिए e-KYC अनिवार्य है।']].forEach(([q,a])=>{heading(q);para(a);});
  heading('निष्कर्ष');
  para('पीएम किसान योजना की 24वीं किस्त से बिहार के 73 लाख से अधिक किसान परिवारों को ₹1,476 करोड़ की सहायता मिली है। लाभार्थियों को सलाह दी जाती है कि वे भुगतान की पुष्टि केवल आधिकारिक PM-KISAN पोर्टल और अपने बैंक खाते से करें। किसी अनजान व्यक्ति के साथ OTP, बैंक विवरण या संवेदनशील जानकारी साझा न करें।');
- const source=document.createElement('p');source.className='news-read-more';const link=document.createElement('a');link.href='https://pmkisan.gov.in/';link.target='_blank';link.rel='noopener noreferrer';link.textContent='आधिकारिक PM-KISAN वेबसाइट पर जाएं →';source.append(link);body.append(source);
+
  return true;
 }
 
@@ -57,11 +57,10 @@ function renderFeedHtml(html){
  doc.body.childNodes.forEach(node=>appendSafe(body,node));
 }
 const hasOriginalArticle=addOriginalBiharPmkisanArticle();
-if(!hasOriginalArticle&&fullContent&&plain(fullContent).length>plain(excerpt).length+80){renderFeedHtml(fullContent);}
-else if(!hasOriginalArticle&&excerpt){const p=document.createElement('p');p.textContent=plain(excerpt);body.append(p);}
+if(!hasOriginalArticle&&excerpt){const p=document.createElement('p');p.textContent=plain(excerpt);body.append(p);}
 else if(!hasOriginalArticle){const p=document.createElement('p');p.textContent=hi?'इस खबर की विस्तृत जानकारी लोड की जा रही है…':'Loading more details for this update…';body.append(p);}
 if(feedImage)addImage(feedImage);
-if(fullContent&&plain(fullContent).length>plain(excerpt).length+80){const note=document.createElement('p');note.className='news-reading-label';note.textContent=hi?'यह लेख उपलब्ध RSS feed के पूरे टेक्स्ट से दिखाया गया है।':'Full text displayed as supplied in the RSS feed.';body.append(note);}
+
 async function loadArticle(){
  if(!articleUrl)return;
  try{
