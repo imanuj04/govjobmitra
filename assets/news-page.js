@@ -88,7 +88,7 @@ async function loadArticle(){
    addHeading(hi?'अक्सर पूछे जाने वाले सवाल':'Frequently asked questions');
    const qa=hi?[[ 'यह खबर किस बारे में है?',title],[ 'इसकी आधिकारिक जानकारी कहां मिलेगी?','संबंधित विभाग, संस्था या आधिकारिक वेबसाइट के अपडेट में इसकी पुष्टि करें।'],[ 'क्या इस जानकारी पर तुरंत कार्रवाई करनी चाहिए?','पहले मूल रिपोर्ट और संबंधित आधिकारिक सूचना की पुष्टि करें।']]:[['What is this news about?',title],['Where can I verify the details?','Check the relevant department, organisation or official website for confirmation.'],['Should I act on this update immediately?','Verify the original report and any relevant official notice first.']];
    qa.forEach(([q,a])=>{const h=document.createElement('h3');h.className='news-subhead';h.textContent=q;body.append(h);addPara(a);});
-   const note=document.createElement('p');note.className='news-reading-label';note.textContent=hi?'GovJobMitra पर तैयार किया गया समाचार-सार और उपयोगी संदर्भ।':'A GovJobMitra news brief with useful context.';body.append(note);
+   
    const seoDescription=(summary||title).slice(0,155);addSeoMeta('description',seoDescription);addSeoMeta('keywords',[title,category,'GovJobMitra','Hindi news','current affairs'].join(', '));
    let canonical=document.querySelector('link[rel="canonical"]');if(!canonical){canonical=document.createElement('link');canonical.rel='canonical';document.head.append(canonical);}canonical.href=location.href.split('#')[0];
    addSeoMeta('og:title',title+' | GovJobMitra',true);addSeoMeta('og:description',seoDescription,true);
